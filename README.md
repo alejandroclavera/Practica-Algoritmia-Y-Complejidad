@@ -1,1 +1,1 @@
-# Pracitica-Algoritmia-Y-Complejidad
+# Practica-Algoritmia-Y-Complejidad
