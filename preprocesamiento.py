@@ -9,7 +9,7 @@ def load_locations(path):
          locations[row['Geo_Location']] = {}
    return locations
 
-def open_csv(path):
+def load_samples_of_csv(path):
    with open(path, 'r') as csv_file:
       csv_reader = csv.DictReader(csv_file)
       next(csv_reader)
@@ -18,7 +18,7 @@ def open_csv(path):
          samples[row['Geo_Location']][row['Accession']] = {'Length':row['Length']}      
    return samples
                   
-samples = open_csv('sequences.csv')
+samples = load_samples_of_csv('sequences.csv')
 
 
 
