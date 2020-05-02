@@ -18,6 +18,8 @@ def load_samples_of_csv(path):
          samples[row['Geo_Location']][row['Accession']] = {'Length':int(row['Length'])}      
    return samples
 
+#test
+
 samples = load_samples_of_csv('sequences.csv')
 
 
