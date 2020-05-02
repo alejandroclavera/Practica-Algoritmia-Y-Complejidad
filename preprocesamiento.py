@@ -20,7 +20,7 @@ def load_samples_of_csv(path):
          samples[row['Geo_Location']][row['Accession']] = {'Length':int(row['Length'])}      
    return samples
 
-<<<<<<< HEAD
+
 def quick_sort(sequence):
    less = []
    pivotlist = []
@@ -51,12 +51,11 @@ def sort_dictionary(samples):
 
       #print(i, samples[i])
 samples = open_csv('sequences.csv')
-=======
-#test
+
 
 samples = load_samples_of_csv('sequences.csv')
 
->>>>>>> preprocesamiento
+
 
 print(list(samples['Hong Kong'].keys()))
 #a = [4,65,2,0,99,83,678,23]
