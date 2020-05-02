@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-#preprocesamiento
-=======
 import csv
 
 def load_regions(path):
@@ -21,11 +18,10 @@ def load_samples_of_csv(path):
          samples[row['Geo_Location']][row['Accession']] = {'Length':int(row['Length'])}      
    return samples
 
-#test2
+#test3
 
 samples = load_samples_of_csv('sequences.csv')
 
 
 
 
->>>>>>> Stashed changes
