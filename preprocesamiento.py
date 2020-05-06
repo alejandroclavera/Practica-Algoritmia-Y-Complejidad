@@ -1,6 +1,5 @@
 import csv
-from collections import OrderedDict
-from operator import getitem
+
 
 def load_regions(path):
    with open(path, 'r') as csv_file:
@@ -21,50 +20,23 @@ def load_samples_of_csv(path):
    return samples
 
 
-def quick_sort(sequence):
+def quick_sort(sequence_samples, sequence):
    less = []
    pivotlist = []
    more = []
-   if len(sequence) <=1:
-      return sequence
+   if len(sequence_samples) <=1:
+      return sequence_samples
    else:
-      pivot = sequence[0]
-      for i in sequence:
-         if i < pivot:
+      pivot_pos = len(sequence_samples)//2
+      pivot = sequence[sequence_samples[pivot_pos]].get('Length')
+      for i in sequence_samples:
+         if sequence[i].get('Length') < pivot:
             less.append(i)
-         elif i > pivot:
+         elif sequence[i].get('Length') > pivot:
             more.append(i)
          else:
             pivotlist.append(i)
-      less = quick_sort(less)
-      more = quick_sort(more)
+      less = quick_sort(less,sequence)
+      more = quick_sort(more,sequence)
       return less + pivotlist + more
-
-def sort_dictionary(samples):
-   print(samples)
-   #samples.sort(key=operator.itemgetter(['Length']))
-   #samples_sorted = {k: v for k, v in sorted(samples.items(), key=lambda x:x['Length'])}
-   #print(samples)
-   print(samples['Length'].values())
-   #a = OrderedDict(sorted(samples.items(), key = lambda x: getitem(int(x[1]),'Length')))
-   #print(a)
-
-      #print(i, samples[i])
-samples = open_csv('sequences.csv')
-
-
-samples = load_samples_of_csv('sequences.csv')
-
-
-
-print(list(samples['Hong Kong'].keys()))
-#a = [4,65,2,0,99,83,678,23]
-print((list(samples['Hong Kong'].values())))
-#x = open_csv('sequences.csv')
-print(sort_dictionary(samples))
-#print(samples['Spain']['MT359865']['Length'])
-#print(samples['Hong Kong'])
-
-
-
 
