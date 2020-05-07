@@ -32,7 +32,8 @@ def calculate_median(samples):
    if len(lengths) % 2 == 1:
       return quickSelect(lengths, len(lengths) / 2)
    else:
-      return 0.5 * (quickSelect(lengths, len(lengths) / 2 - 1) + quickSelect(lengths, len(lengths) / 2))
+      #return 0.5 * (quickSelect(lengths, len(lengths) / 2 - 1) + quickSelect(lengths, len(lengths) / 2))
+      return quickSelect(lengths, len(lengths) / 2)
 
 def quickSelect(lengths,k):
    if len(lengths) == 1:
@@ -68,9 +69,6 @@ def partition(partitionList):
 
 
 samples = load_samples_of_csv('sequences.csv')
+
 for country in samples:
    print(calculate_median(samples[country]))
-
-
-
-
