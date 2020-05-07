@@ -24,21 +24,24 @@ def load_samples_of_csv(path):
             samples[row['Geo_Location']][row['Accession']] = {'Length':int(row['Length'])}      
    return samples
 
-def calculate_median(samples):
+def median(samples):
    lengths = []
    for sample in samples.values():
       lengths.append(sample['Length']) 
+   return calculateMedian(lengths)
+
+def calculateMedian(lengths):
    #Calculate median depending whether length is even or not
    if len(lengths) % 2 == 1:
-      return quickSelect(lengths, len(lengths) / 2)
+      return quickSelect(lengths, len(lengths) // 2)
    else:
-      return 0.5 * (quickSelect(lengths, len(lengths) / 2 - 1) + quickSelect(lengths, len(lengths) / 2))
+      return 0.5 * (quickSelect(lengths, len(lengths) // 2 - 1) + quickSelect(lengths, len(lengths) // 2))
 
-def quickSelect(lengths,k):
-   if len(lengths) == 1:
-      return lengths[0]
+def quickSelect(lisT,k):
+   if len(lisT) == 1:
+      return lisT[0]
    else:
-      smallerThan, biggerThan, equalTo = partition(lengths)
+      smallerThan, biggerThan, equalTo = partition(lisT)
       if k < len(smallerThan):
          return quickSelect(smallerThan,k)
       elif k < len(smallerThan) + len(equalTo):     
@@ -48,7 +51,7 @@ def quickSelect(lengths,k):
          return quickSelect(biggerThan,k-len(smallerThan)-len(equalTo))
 
 def partition(partitionList):
-   pivot = random.choice(partitionList) 
+   pivot = pickPivot(partitionList) 
    smallerThan = []
    biggerThan = []
    equalTo = []
@@ -66,11 +69,41 @@ def partition(partitionList):
          equalTo.append(element)
    return smallerThan, biggerThan, equalTo
 
+def pickPivot(lisT):
+   #Algorith: median of medians
+   assert len(lisT) > 0
+   if len(lisT) < 5:
+      return basicMedian(lisT)  
+   #Separate into groups
+   groups = makeGroups(lisT, 5)
+   #Sort groups which size is equal to 5 and get their medians  
+   medians = []
+   for group in groups:
+      if len(group) == 5:
+         #Sort groups
+         sortedGroup = sorted(group) #TODO change with quickSort
+         #Get medians of group
+         medians.append(sortedGroup[2])
+   #Median of medians
+   return calculateMedian(medians)
+   
+def makeGroups(lisT, groupSize):
+   return [lisT[i:i + groupSize] for i in range(0, len(lisT), groupSize)]
+
+def basicMedian(lisT):
+   lisT = sorted(lisT)        #TODO change with quickSort
+   if len(lisT) % 2 == 1:
+      return lisT[len(lisT) // 2]
+   else:
+      return 0.5 * (lisT[len(lisT) // 2 - 1] + lisT[len(lisT) // 2])
+
 
 samples = load_samples_of_csv('sequences.csv')
+'''
 for country in samples:
    print(calculate_median(samples[country]))
-
+'''
+print(median(samples['Iran']))
 
 
 
