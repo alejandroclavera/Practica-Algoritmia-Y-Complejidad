@@ -105,5 +105,3 @@ for country in samples:
 '''
 print(median(samples['Iran']))
 
-
-
