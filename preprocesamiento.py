@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# vim: set fileencoding=utf-8 :
-
 import csv
-import random
 
 def load_regions(path):
    with open(path, 'r') as csv_file:
@@ -24,18 +21,33 @@ def load_samples_of_csv(path):
             samples[row['Geo_Location']][row['Accession']] = {'Length':int(row['Length'])}      
    return samples
 
+
+def quick_sort(list_to_sort):
+   less = []
+   pivotlist = []
+   more = []
+   if len(list_to_sort) <=1:
+      return list_to_sort
+   else:
+      pivot_pos = len(list_to_sort) // 2
+      pivot = list_to_sort[pivot_pos]
+      for i in list_to_sort:
+         if i[1] < pivot[1]:
+            less.append(i)
+         elif i[1] > pivot[1]:
+            more.append(i)
+         else:
+            pivotlist.append(i)
+      less = quick_sort(less)
+      more = quick_sort(more)
+      return less + pivotlist + more
+
 def median(samples):
-   lengths = []
-   for sample in samples.values():
-      lengths.append(sample['Length']) 
+   lengths = [(sample,samples[sample]['Length']) for sample in samples.keys()]
    return calculateMedian(lengths)
 
 def calculateMedian(lengths):
-   #Calculate median depending whether length is even or not
-   if len(lengths) % 2 == 1:
-      return quickSelect(lengths, len(lengths) // 2)
-   else:
-      return 0.5 * (quickSelect(lengths, len(lengths) // 2 - 1) + quickSelect(lengths, len(lengths) // 2))
+   return quickSelect(lengths, len(lengths) // 2)
 
 def quickSelect(lisT,k):
    if len(lisT) == 1:
@@ -51,21 +63,17 @@ def quickSelect(lisT,k):
          return quickSelect(biggerThan,k-len(smallerThan)-len(equalTo))
 
 def partition(partitionList):
-   pivot = pickPivot(partitionList) 
+   pivot = pickPivot(partitionList)
    smallerThan = []
    biggerThan = []
    equalTo = []
    #Smaller than the pivot
    for element in partitionList:
-      if element < pivot:
+      if element[1] < pivot[1]:
          smallerThan.append(element)
-   #Bigger than the pivot
-   for element in partitionList:
-      if element > pivot:
-         biggerThan.append(element)
-   #Equal to the pivot
-   for element in partitionList:
-      if element == pivot:
+      elif element[1] > pivot[1]:
+          biggerThan.append(element)
+      else:
          equalTo.append(element)
    return smallerThan, biggerThan, equalTo
 
@@ -91,19 +99,28 @@ def makeGroups(lisT, groupSize):
    return [lisT[i:i + groupSize] for i in range(0, len(lisT), groupSize)]
 
 def basicMedian(lisT):
-   lisT = sorted(lisT)        #TODO change with quickSort
-   if len(lisT) % 2 == 1:
-      return lisT[len(lisT) // 2]
-   else:
-      return 0.5 * (lisT[len(lisT) // 2 - 1] + lisT[len(lisT) // 2])
+   lisT = quick_sort(lisT)
+   return lisT[len(lisT) // 2]
+   
+def get_median_samples_of_csv(path):
+   try:
+      samples = load_samples_of_csv(path)
+      median_samples = []
+      for country in samples.keys():
+         median_samples.append(median(samples[country]))
+   except:
+      raise Exception('ERROR => No se ha podigo cargar las muestras')
+   return median_samples
 
 
-samples = load_samples_of_csv('sequences.csv')
-'''
-for country in samples:
-   print(calculate_median(samples[country]))
-'''
-print(median(samples['Iran']))
+
+
+
+
+
+
+
+
 
 
 
