@@ -11,7 +11,6 @@ def get_arn_string(content):
 def load_arn_samples(csv_path):
    samples = preprocesamiento.get_median_samples_of_csv(csv_path)
    samples_id_list = []
-   
    if not os.path.exists('samples/'):
       os.mkdir('samples/')
    for sample in samples:
