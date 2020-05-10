@@ -44,7 +44,6 @@ load_arn_samples('sequences.csv')
 
 
 #ALGORITM: Needleman–Wunsch
-
 similarityMatrix = [[10,-1,-3,-4],[-1,7,-5,-3],[-3,-5,9,0],[-4,-3,0,8]]
 gapPenalty = -5 
 charIndx = {
@@ -55,9 +54,12 @@ charIndx = {
 }
 
 def calcSimil(a,b):
-    return similarityMatrix[charIndx[a]][charIndx[b]]
+    if a == '-' or b == '-':
+        return gapPenalty
+    else:
+        return similarityMatrix[charIndx[a]][charIndx[b]]
 
-def createMatrix(seq1, seq2):
+def calcNeedlemanScore(seq1, seq2):
     M = []
     n = len(seq1)
     m = len(seq2)
@@ -79,7 +81,6 @@ def createMatrix(seq1, seq2):
     align2 = ""
     i = m
     j = n
-    cost = 0
     while i > 0 and j > 0:
         if M[i][j] == M[i-1][j-1] + calcSimil(seq1[j-1], seq2[i-1]):
             align1 += seq1[j-1]
@@ -103,17 +104,27 @@ def createMatrix(seq1, seq2):
         align1 += '-'
         align2 += seq2[i-1]
         i -= 1
-    #Invert words because we started from the bottom left
+    #Invert words because we started from the bottom left (debug only)
+    '''
     align1 = align1[::-1]
     align2 = align2[::-1] 
-    #TODO calc cost
-    return(align1, align2, cost)
+    '''
+    #Calculate score
+    score = 0
+    i = min(len(align1),len(align2))-1
+    while i >= 0:
+        score += calcSimil(align1[i],align2[i])
+        i -= 1
+    return score
 
+#Debug only
+'''
 def printMatrix(M):
     for r in M:
         for c in r:
             print(c, end=" ")
         print()
-
-print(createMatrix("ATTACA","ATGCT"))
+'''
+#More score -> more similar
+print(calcNeedlemanScore("ATATAGC","A"))
 
