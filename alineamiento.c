@@ -53,7 +53,7 @@ int calc_needleman_score(char* seq1, int len_seq1, char* seq2, int len_seq2)
         alig_matrix[i][0] = GAP_PENALTY * i;
     }
 
-    for(int i = 0; i <= len_seq1; i++)
+    for(int i = 0; i <= len_seq2; i++)
         alig_matrix[0][i] = GAP_PENALTY * i;
 
     for(int i = 1; i <= len_seq1; i++)
@@ -65,10 +65,13 @@ int calc_needleman_score(char* seq1, int len_seq1, char* seq2, int len_seq2)
             int choice3 = alig_matrix[i][j-1] +  GAP_PENALTY;
             alig_matrix[i][j] = max(max(choice1, choice2), choice3);
         }
-        free(alig_matrix[i-1]);
     }
     score = alig_matrix[len_seq1][len_seq2];
-    free(alig_matrix[len_seq1]);
+    for(int i = 0; i < len_seq1; i++){
+        free(alig_matrix[i]);
+        alig_matrix[i] = NULL;
+    }
     free(alig_matrix);
+    alig_matrix = NULL;
     return score;
 }  
