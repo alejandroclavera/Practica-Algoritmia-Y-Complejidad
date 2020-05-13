@@ -17,7 +17,7 @@ def load_samples_of_csv(path):
       next(csv_reader)
       samples = load_regions(path)
       for row in csv_reader:
-         samples[row['Geo_Location']][row['Accession']] = {'Length':int(row['Length'])}      
+         samples[row['Geo_Location'].split(':')[0]][row['Accession']] = {'Length':int(row['Length'])}      
    return samples
 
 def quick_sort(list_to_sort):
@@ -113,5 +113,4 @@ def get_median_samples_of_csv(path):
 medians = get_median_samples_of_csv("./sequences.csv")
 for median in medians:
    print("Country median: "+str(median[1])+" which is sample: "+str(median[0]))
-
 
