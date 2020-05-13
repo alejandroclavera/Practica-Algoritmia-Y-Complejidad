@@ -110,7 +110,5 @@ def get_median_samples_of_csv(path):
       raise Exception('ERROR => No se ha podigo cargar las muestras')
    return median_samples
 
-medians = get_median_samples_of_csv("./sequences.csv")
-for median in medians:
-   print("Country median: "+str(median[1])+" which is sample: "+str(median[0]))
+
 

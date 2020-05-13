@@ -67,9 +67,8 @@ def get_arn_sample(sample_id):
      
 arn_str1 = get_arn_sample(samples[0])
 arn_str12 = get_arn_sample(samples[1])
-#print(calcNeedlemanScore(arn_str1,arn_str12))
-#print(calcNeedlemanScore("ATATAGC","ATATGC"))
-print(calcNeedlemanScore("GCATG-CA","G-ATTACA"))
+print(calcNeedlemanScore(arn_str1,arn_str12))
+
 
 
 
