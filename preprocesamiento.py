@@ -8,7 +8,7 @@ def load_regions(path):
       next(csv_reader)
       locations = {}
       for row in csv_reader:
-         locations[row['Geo_Location']] = {}
+         locations[row['Geo_Location'].split(':')[0]] = {}
    return locations
 
 def load_samples_of_csv(path):
