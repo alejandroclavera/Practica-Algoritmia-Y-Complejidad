@@ -43,6 +43,7 @@ load_arn_samples('sequences.csv')
 
 
 
+
 #ALGORITM: Needleman–Wunsch
 similarityMatrix = [[10,-1,-3,-4],[-1,7,-5,-3],[-3,-5,9,0],[-4,-3,0,8]]
 gapPenalty = -5 
@@ -126,5 +127,6 @@ def printMatrix(M):
         print()
 '''
 #More score -> more similar
+
 print(calcNeedlemanScore("ATATAGC","A"))
 
