@@ -76,9 +76,9 @@ def generateRangeScores(iniVal, endVal):
    print("INI: "+str(iniVal)+" END: "+str(endVal))
    alreadyDone = iniVal
    for sample in range(alreadyDone,endVal+1):
-      arn_str1 = get_arn_sample(samples[sample])
+      arn_str1 = get_arn_sample(samples[sample][:1000])
       for i in range(alreadyDone,len(scoreMatrix)):
-         scoreMatrix[alreadyDone-1][i] = i#calcNeedlemanScore(arn_str1, get_arn_sample(samples[i]))
+         scoreMatrix[alreadyDone-1][i] = i#TODO uncoment   calcNeedlemanScore(arn_str1, get_arn_sample(samples[i][:1000]))
       alreadyDone += 1
    print("end")
 
