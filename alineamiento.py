@@ -6,6 +6,13 @@ import os
 import preprocesamiento
 import ctypes
 
+import threading
+import math
+import numpy
+
+
+scoreMatrix = []
+
 def get_arn_string(content):
     content = content.decode('utf-8')
     arn_string = content[content.find('\n') + 1:]
@@ -54,7 +61,6 @@ def calcNeedlemanScore(seq1, seq2):
     m = ctypes.c_int(m) 
     return needlemanScore.calc_needleman_score(seq1_array(*seq1.encode()),n,seq2_array(*seq2.encode()),m)
 
-samples = load_arn_samples('sequences.csv')
 def get_arn_sample(sample_id):
    try:
       sample_file = open('samples/{0}.fasta'.format(sample_id), 'r')
@@ -64,14 +70,97 @@ def get_arn_sample(sample_id):
       return sample
    except:
       print('Error al cargar muestra')
-     
-arn_str1 = get_arn_sample(samples[0])
-arn_str12 = get_arn_sample(samples[1])
+
+def generateRangeScores(iniVal, endVal):
+   global scoreMatrix
+   print("INI: "+str(iniVal)+" END: "+str(endVal))
+   alreadyDone = iniVal
+   for sample in range(alreadyDone,endVal+1):
+      arn_str1 = get_arn_sample(samples[sample])
+      for i in range(alreadyDone,len(scoreMatrix)):
+         scoreMatrix[alreadyDone-1][i] = i#calcNeedlemanScore(arn_str1, get_arn_sample(samples[i]))
+      alreadyDone += 1
+   print("end")
+
+def printMatrix(M):
+    for r in M:
+        for c in r:
+            print(c, end=" ")
+        print()
+
+
+samples = load_arn_samples('sequences.csv')    
+arn_str1 = get_arn_sample(samples[2][:1000])
+arn_str12 = get_arn_sample(samples[4][:1000])
 #print(calcNeedlemanScore(arn_str1,arn_str12))
+#scoreMatrix = [[0 for x in range(len(samples))] for y in range(len(samples))]
+scoreMatrix = [[0 for x in range(35)] for y in range(35)] 
+generateRangeScores(1,35)
+a = numpy.asarray(scoreMatrix)
+numpy.savetxt("matrix.csv", a, delimiter=",")
+#DEBUG
+printMatrix(scoreMatrix)
+
+
+
+
+
+
+
+
+
+
+
+#------------------------------CEMENTERIO------------------------------------
 #print(calcNeedlemanScore("ATATAGC","ATATGC"))
-print(calcNeedlemanScore("GCATG-CA","G-ATTACA"))
+#print(calcNeedlemanScore("GCATG-CA","G-ATTACA"))
+
+#calcNeedlemanScore(arn_str1, arn_str12)
+#generateScoreMatrix(35)
+
+
+'''
+if i == numOfThreads:
+   endRang=35#len(samples)
+else:
+   endRang=2*i*calcRange
+'''
 
 
 
+'''
+def test():
+   arn_str1 = get_arn_sample(samples[2][:1000])
+   arn_str12 = get_arn_sample(samples[4][:1000])
+   print(calcNeedlemanScore(arn_str1,arn_str12))
+
+thread1 = threading.Thread(target=test())
+thread2 = threading.Thread(target=test())
+thread1.setDaemon(True)
+'''
 
 
+
+'''
+def generateScoreMatrix(numOfThreads): 
+   threads = [] 
+   #calcRange = math.ceil(35/numOfThreads)
+   calcRange = 35//numOfThreads
+   lastNum = calcRange + (35 - calcRange*numOfThreads)
+   pivot = 1
+   for i in range(1,numOfThreads+1):
+      if i == numOfThreads:
+         endRang=lastNum
+      else:
+         endRang=i*calcRange
+      thread = threading.Thread(target=generateRangeScores(pivot,endRang))
+      thread.setDaemon(True)
+      threads.append(thread)
+      pivot = endRang
+   #Start
+   for i in range(numOfThreads):
+      threads[i].start()
+   #Wait for threads
+   for i in range(numOfThreads):
+      threads[i].join()
+'''

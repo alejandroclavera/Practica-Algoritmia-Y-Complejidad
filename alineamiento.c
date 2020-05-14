@@ -44,6 +44,7 @@ void view(int **matrix, int n, int m)
 int calc_needleman_score(char* seq1, int len_seq1, char* seq2, int len_seq2)
 {
     int **alig_matrix;
+    int score;
     //create and initialize alignament matrix
     alig_matrix = (int**)calloc(len_seq1 + 1 ,sizeof(int*));
     for(int i = 0; i <= len_seq1; i++)
@@ -52,7 +53,7 @@ int calc_needleman_score(char* seq1, int len_seq1, char* seq2, int len_seq2)
         alig_matrix[i][0] = GAP_PENALTY * i;
     }
 
-    for(int i = 0; i <= len_seq1; i++)
+    for(int i = 0; i <= len_seq2; i++)
         alig_matrix[0][i] = GAP_PENALTY * i;
 
     for(int i = 1; i <= len_seq1; i++)
@@ -65,5 +66,12 @@ int calc_needleman_score(char* seq1, int len_seq1, char* seq2, int len_seq2)
             alig_matrix[i][j] = max(max(choice1, choice2), choice3);
         }
     }
-    return alig_matrix[len_seq1][len_seq2];
+    score = alig_matrix[len_seq1][len_seq2];
+    for(int i = 0; i < len_seq1; i++){
+        free(alig_matrix[i]);
+        alig_matrix[i] = NULL;
+    }
+    free(alig_matrix);
+    alig_matrix = NULL;
+    return score;
 }  
