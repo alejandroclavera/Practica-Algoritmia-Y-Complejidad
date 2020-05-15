@@ -54,7 +54,7 @@ def calcNeedlemanScore(seq1, seq2):
     m = ctypes.c_int(m) 
     return needlemanScore.calc_needleman_score(seq1_array(*seq1.encode()),n,seq2_array(*seq2.encode()),m)
 
-samples = load_arn_samples('sequences.csv')
+
 def get_arn_sample(sample_id):
    try:
       sample_file = open('samples/{0}.fasta'.format(sample_id), 'r')
@@ -65,9 +65,26 @@ def get_arn_sample(sample_id):
    except:
       print('Error al cargar muestra')
      
-arn_str1 = get_arn_sample(samples[0])
-arn_str12 = get_arn_sample(samples[1])
-print(calcNeedlemanScore(arn_str1,arn_str12))
+def get_scores(path):
+    samples = load_arn_samples(path)
+    scores = []
+    for i in range(len(samples)):
+        sample_scores = []
+        current_arn_str = get_arn_sample(samples[i])
+        for j in range(len(samples)):
+            if j < i:
+                sample_scores.append(scores[j][i])
+            else:
+                arn_str_to_cmp = get_arn_sample(samples[j])
+                sample_scores.append(calcNeedlemanScore(current_arn_str, arn_str_to_cmp))
+        scores.append(sample_scores)
+    return scores
+
+print(get_scores('sequences.csv'))
+
+            
+
+
 
 
 
