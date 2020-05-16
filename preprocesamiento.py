@@ -8,7 +8,7 @@ def load_regions(path):
       next(csv_reader)
       locations = {}
       for row in csv_reader:
-         locations[row['Geo_Location']] = {}
+         locations[row['Geo_Location'].split(':')[0]] = {}
    return locations
 
 def load_samples_of_csv(path):
@@ -17,7 +17,7 @@ def load_samples_of_csv(path):
       next(csv_reader)
       samples = load_regions(path)
       for row in csv_reader:
-         samples[row['Geo_Location']][row['Accession']] = {'Length':int(row['Length'])}      
+         samples[row['Geo_Location'].split(':')[0]][row['Accession']] = {'Length':int(row['Length'])}      
    return samples
 
 def quick_sort(list_to_sort):
@@ -110,6 +110,5 @@ def get_median_samples_of_csv(path):
       raise Exception('ERROR => No se ha podigo cargar las muestras')
    return median_samples
 
-medians = get_median_samples_of_csv("./sequences.csv")
 
 
