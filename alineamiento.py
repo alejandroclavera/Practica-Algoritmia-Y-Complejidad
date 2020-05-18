@@ -42,17 +42,17 @@ def load_arn_samples(csv_path):
    return samples_id_list
 
 #ALGORITM: Needleman–Wunsch
-def calcNeedlemanScore(seq1, seq2):
+def calcNeedlemanScore(seq1, seq2, max_len = 1000):
     needlemanScore = ctypes.CDLL('library/alineamiento.so')
     needlemanScore.calc_needleman_score.argtypes = (ctypes.POINTER(ctypes.c_char), ctypes.c_int,ctypes.POINTER(ctypes.c_char), ctypes.c_int,)
     needlemanScore.calc_needleman_score.restype = ctypes.c_int 
-    n = len(seq1)
-    m = len(seq2)
-    seq1_array = ctypes.c_char * n
-    seq2_array = ctypes.c_char * m
-    n = ctypes.c_int(n)
-    m = ctypes.c_int(m) 
-    return needlemanScore.calc_needleman_score(seq1_array(*seq1.encode()),n,seq2_array(*seq2.encode()),m)
+    len_seq1 = len(seq1) if len(seq1) < max_len else max_len
+    len_seq2 = len(seq2) if len(seq2) < max_len else max_len
+    seq1_array = ctypes.c_char * len_seq1
+    seq2_array = ctypes.c_char * len_seq2
+    n = ctypes.c_int(len_seq1)
+    m = ctypes.c_int(len_seq2) 
+    return needlemanScore.calc_needleman_score(seq1_array(*seq1[:len_seq1].encode()),n,seq2_array(*seq2[:len_seq2].encode()),m)
 
 
 def get_arn_sample(sample_id):
