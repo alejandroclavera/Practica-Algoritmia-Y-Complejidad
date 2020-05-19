@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# vim: set fileencoding=utf-8 :
 import requests
 import os
 import preprocesamiento
 import ctypes
+
 
 def get_arn_string(content):
     content = content.decode('utf-8')
@@ -78,9 +78,9 @@ def get_scores(path):
                 arn_str_to_cmp = get_arn_sample(samples[j])
                 sample_scores.append(calcNeedlemanScore(current_arn_str, arn_str_to_cmp))
         scores.append(sample_scores)
-    return scores
+    return scores, samples #TODO: cuando se junte todo samples se quita del return
 
-print(get_scores('sequences.csv'))
+
 
             
 
