@@ -16,7 +16,7 @@ def group_up(samples_matrix, id_samples,centers, clusters):
                     best_cluster_center = center
                     best_cluster = current_cluster
                 current_cluster += 1
-            clusters[best_cluster].append((id_samples[sample],samples_matrix[sample][sample]))
+            clusters[best_cluster].append((id_samples[sample],samples_matrix[sample][best_cluster_center]))
     return clusters
 
 def calc_total_cost(clusters, centers):
@@ -53,7 +53,10 @@ def k_metoids(samples_matrix, id_samples, k=2):
                   
 
 scores, id= alineamiento.get_scores('sequences.csv')
-print(k_metoids(scores, id, k=3))
+clusters, iterations, centers = k_metoids(scores, id, k=3)
+for c in clusters:
+    print(c)
+    print('===============')
 
 
 
