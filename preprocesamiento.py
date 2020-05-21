@@ -41,8 +41,8 @@ def quick_sort(list_to_sort):
       return less + pivotlist + more
 
 def median(samples):
-   lengths = [(sample,samples[sample]['Length']) for sample in samples.keys()]
-   return calculateMedian(lengths)
+   lengths = [(sample,samples[sample]['Length'],sample) for sample in samples.keys()]
+   return calculateMedian(lengths)[0] #get id of sample
 
 def calculateMedian(lengths):
    return quickSelect(lengths, len(lengths) // 2)
@@ -105,7 +105,7 @@ def get_median_samples_of_csv(path):
       samples = load_samples_of_csv(path)
       median_samples = []
       for country in samples.keys():
-         median_samples.append(median(samples[country]))
+         median_samples.append((median(samples[country]), country))
    except:
       raise Exception('ERROR => No se ha podigo cargar las muestras')
    return median_samples

@@ -52,13 +52,6 @@ def k_metoids(samples_matrix, id_samples, k=3):
     return clusters, iterations, centers
                   
 
-scores, id= alineamiento.get_scores('sequences.csv')
-clusters, iterations, centers = k_metoids(scores, id, k=3)
-for c in clusters:
-    print(c)
-    print('===============')
-print(centers)
-
 
 
 
