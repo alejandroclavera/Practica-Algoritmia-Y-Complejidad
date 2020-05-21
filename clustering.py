@@ -33,7 +33,7 @@ def calc_next_centers(clusters):
     return centers
 
 
-def k_metoids(samples_matrix, id_samples, k=2):
+def k_metoids(samples_matrix, id_samples, k=3):
     #select the init centers clusters
     iterations = 0
     centers = random.sample(range(len(id_samples)),k)
@@ -57,6 +57,7 @@ clusters, iterations, centers = k_metoids(scores, id, k=3)
 for c in clusters:
     print(c)
     print('===============')
+print(centers)
 
 
 
