@@ -12,15 +12,15 @@ def get_arn_string(content):
     arn_string = content[content.find('\n') + 1:]
     return arn_string
 
-def load_arn_samples(samples):
+def load_arn_samples(path, samples):
     '''Downloads the samples and stores them in a file if they do not exist.'''
     samples_id_list = []
-    if not os.path.exists('samples/'):
-        os.mkdir('samples/')
+    if not os.path.exists(path):
+        os.mkdir(path)
     for sample in samples:
         sample_id = sample['sample']
         samples_id_list.append(sample_id)
-        sample_path = 'samples/{0}.fasta'.format(sample_id)
+        sample_path = '{0}/{1}.fasta'.format(path, sample_id)
         if not os.path.exists(sample_path):
             url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id={0}&rettype=fasta".format(sample_id)
             sample_content = requests.get(url).content
@@ -48,25 +48,25 @@ def calc_needleman_score(seq1, seq2, max_len):
     len_seq2 = ctypes.c_int(len_seq2)
     return needleman_score.calc_needleman_score(seq1, len_seq1, seq2, len_seq2)
 
-def get_arn_sample(sample_id):
+def get_arn_sample(path, sample_id):
     '''This function eliminates the line breaks of each sample read from the FASTA file.'''
-    sample_file = open('samples/{0}.fasta'.format(sample_id), 'r')
+    sample_file = open('{0}/{1}.fasta'.format(path, sample_id), 'r')
     sample = ''
     for line in sample_file:
         sample += line.split('\n')[0]
     return sample
 
-def get_scores(samples, max_len=1000):
+def get_scores(path, samples, max_len=1000):
     '''This function performs the alignment of all the RNA chains.'''
-    samples = load_arn_samples(samples)
+    samples = load_arn_samples(path, samples)
     scores = [[0 for j in range(len(samples))] for i in range(len(samples))]
     current_col = 0
     current_row = 0
     for sample in samples:
-        current_arn_str = get_arn_sample(sample)
+        current_arn_str = get_arn_sample(path, sample)
         current_col = current_row + 1
         for sample_to_aling in samples[current_row + 1:]:
-            arn_str_to_cmp = get_arn_sample(sample_to_aling)
+            arn_str_to_cmp = get_arn_sample(path, sample_to_aling)
             score = calc_needleman_score(current_arn_str, arn_str_to_cmp, max_len)
             scores[current_row][current_col] = score
             scores[current_col][current_row] = score

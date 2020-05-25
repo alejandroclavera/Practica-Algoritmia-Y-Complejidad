@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-
 #define GAP_PENALTY -5
 
 int char_index(char symbol)
@@ -32,19 +31,6 @@ int calc_simil(char sym1, char sym2)
 int max(int num1, int num2)
 {
     return (num1 > num2) ? num1 : num2;
-}
-
-//Función temporal
-void view(int **matrix, int n, int m)
-{
-    for(int i = 0; i <= n; i++)
-    {
-        for(int j = 0; j <= m; j++)
-        {
-            printf("%d ", matrix[i][j]);
-        }
-        printf("\n");
-    }   
 }
 
 int calc_needleman_score(char* seq1, int len_seq1, char* seq2, int len_seq2)

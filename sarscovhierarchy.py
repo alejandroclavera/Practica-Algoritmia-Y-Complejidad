@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 '''
 This program groups the samples obtained from the SARS-CoV-2 of a csv according to their similarity.
 '''
@@ -8,13 +10,13 @@ import clustering
 def main():
     '''Program execution.'''
     if len(sys.argv) < 2:
-        print('sarscovhierachy <sequences_path>')
+        print('sarscovhierachy <sequences_FASTA_path>')
         sys.exit(0)
     try:
         sequences_path = sys.argv[1]
-        samples = preprocesamiento.get_median_samples_of_csv(sequences_path)
+        samples = preprocesamiento.get_median_samples_of_csv('sequences.csv')
         print('MSG => Alineando las secuencias, esta operación puede tardar un poco.')
-        scores = alineamiento.get_scores(samples, max_len=1000)
+        scores = alineamiento.get_scores(sequences_path, samples, max_len=1000)
     except FileNotFoundError:
         print('ERROR => No se ha podido cargar las muestras')
         sys.exit(0)

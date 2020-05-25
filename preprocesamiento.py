@@ -5,6 +5,7 @@ Esta script prepara las mustras leidas del csv, para su posterior tratamiento.
 '''
 import csv
 def load_regions(path):
+    '''Load regions of csv.'''
     with open(path, 'r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         next(csv_reader)
@@ -14,6 +15,7 @@ def load_regions(path):
     return locations
 
 def load_samples_of_csv(path):
+    '''Load samples of regions.'''
     with open(path, 'r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         next(csv_reader)
@@ -24,6 +26,7 @@ def load_samples_of_csv(path):
     return samples
 
 def quick_sort(list_to_sort):
+    '''Sorting algorithm'''
     less = []
     pivotlist = []
     more = []
@@ -43,14 +46,17 @@ def quick_sort(list_to_sort):
     return less + pivotlist + more
 
 def median(samples):
+    '''This function calculates the median length sample from a list.'''
     lengths = [(sample, samples[sample]['Length']) for sample in samples.keys()]
     return calculate_median(lengths) #get id of sample
 
 def calculate_median(lengths):
+    '''Calculate the median with quick_sort'''
     sorted_lengths = quick_sort(lengths)
     return sorted_lengths[len(sorted_lengths) // 2]
 
 def get_median_samples_of_csv(path):
+    '''This function obtains the median sample of each country'''
     samples = load_samples_of_csv(path)
     median_samples = []
     for country in list(samples.keys()):
