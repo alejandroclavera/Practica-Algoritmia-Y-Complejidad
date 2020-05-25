@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+
 #define GAP_PENALTY -5
 
 int char_index(char symbol)
@@ -17,7 +18,12 @@ int char_index(char symbol)
 
 int calc_simil(char sym1, char sym2)
 {
-    int similarity_matrix[4][4] = {{10,-1,-3,-4},{-1,7,-5,-3},{-3,-5,9,0},{-4,-3,0,8}};    
+    
+    int similarity_matrix[4][4] = {{0,2,3,4},
+                                 {2,0,5,3},
+                                 {3,5,0,1},
+                                 {4,3,1,0}}; 
+                                                               
     if(sym1 != '-' && sym2 !='-' )
         return similarity_matrix[char_index(sym1)][char_index(sym2)];
     return GAP_PENALTY;
@@ -49,7 +55,7 @@ int calc_needleman_score(char* seq1, int len_seq1, char* seq2, int len_seq2)
     alig_matrix = (int**)calloc(len_seq1 + 1 ,sizeof(int*));
     for(int i = 0; i <= len_seq1; i++)
     {
-        alig_matrix[i] = (int*)calloc(len_seq2 + 1, sizeof(int));
+        alig_matrix[i] = (int*)calloc(len_seq2 + 1, sizeof(unsigned int));
         alig_matrix[i][0] = GAP_PENALTY * i;
     }
 
@@ -60,7 +66,7 @@ int calc_needleman_score(char* seq1, int len_seq1, char* seq2, int len_seq2)
     {
         for(int j = 1; j <= len_seq2; j++)
         {
-            int choice1 = alig_matrix[i-1][j-1] + calc_simil(seq1[i - 1], seq2[j-1]);
+            int choice1 = alig_matrix[i-1][j-1] + calc_simil(seq1[i], seq2[j]);
             int choice2 = alig_matrix[i-1][j] + GAP_PENALTY;
             int choice3 = alig_matrix[i][j-1] +  GAP_PENALTY;
             alig_matrix[i][j] = max(max(choice1, choice2), choice3);
@@ -69,7 +75,9 @@ int calc_needleman_score(char* seq1, int len_seq1, char* seq2, int len_seq2)
         alig_matrix[i-1] = NULL;
     }
     score = alig_matrix[len_seq1][len_seq2];
+    free(alig_matrix[len_seq1]);
+    alig_matrix[len_seq1] = NULL;
     free(alig_matrix);
     alig_matrix = NULL;
     return score;
-}  
+}

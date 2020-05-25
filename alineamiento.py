@@ -1,80 +1,75 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import requests
+'''
+This module gets the optimal alignment of each sequence compared to all the others.
+'''
 import os
-import preprocesamiento
 import ctypes
-
+import requests
 def get_arn_string(content):
+    '''This function removes the first line of the FASTA file'''
     content = content.decode('utf-8')
     arn_string = content[content.find('\n') + 1:]
     return arn_string
 
 def load_arn_samples(samples):
-   samples_id_list = []
-   if not os.path.exists('samples/'):
-      os.mkdir('samples/')
-   for sample in samples:
-      id = sample[0]
-      samples_id_list.append(id)
-      sample_path = 'samples/{0}.fasta'.format(id)
-      if not os.path.exists(sample_path):
-         url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id={0}&rettype=fasta".format(id)
-         sample_content = requests.get(url).content
-         arn_string = get_arn_string(sample_content)   
-         print('Descargando muestra {0}'.format(id))
-         with open(sample_path, 'a') as sample_file:
-            sample_file.write(arn_string)
-            sample_file.close()
-   return samples_id_list
+    '''Downloads the samples and stores them in a file if they do not exist.'''
+    samples_id_list = []
+    if not os.path.exists('samples/'):
+        os.mkdir('samples/')
+    for sample in samples:
+        sample_id = sample['sample']
+        samples_id_list.append(sample_id)
+        sample_path = 'samples/{0}.fasta'.format(sample_id)
+        if not os.path.exists(sample_path):
+            url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id={0}&rettype=fasta".format(sample_id)
+            sample_content = requests.get(url).content
+            arn_string = get_arn_string(sample_content)
+            print('Descargando muestra {0}'.format(sample_id))
+            with open(sample_path, 'a') as sample_file:
+                sample_file.write(arn_string)
+                sample_file.close()
+    return samples_id_list
 
 #ALGORITM: Needleman–Wunsch
-def calcNeedlemanScore(seq1, seq2, max_len):
-    needlemanScore = ctypes.CDLL('library/alineamiento.so')
-    needlemanScore.calc_needleman_score.argtypes = (ctypes.POINTER(ctypes.c_char), ctypes.c_int,ctypes.POINTER(ctypes.c_char), ctypes.c_int,)
-    needlemanScore.calc_needleman_score.restype = ctypes.c_int 
+def calc_needleman_score(seq1, seq2, max_len):
+    '''Needleman – Wunsch algorithm implementation in c.'''
+    needleman_score = ctypes.CDLL('library/alineamiento.so')
+    needleman_score.calc_needleman_score.argtypes = (
+        ctypes.POINTER(ctypes.c_char), ctypes.c_int, ctypes.POINTER(ctypes.c_char), ctypes.c_int,)
+    needleman_score.calc_needleman_score.restype = ctypes.c_int
     len_seq1 = len(seq1) if len(seq1) < max_len else max_len
     len_seq2 = len(seq2) if len(seq2) < max_len else max_len
     seq1_array = ctypes.c_char * len_seq1
     seq2_array = ctypes.c_char * len_seq2
-    n = ctypes.c_int(len_seq1)
-    m = ctypes.c_int(len_seq2) 
-    return needlemanScore.calc_needleman_score(seq1_array(*seq1[:len_seq1].encode()),n,seq2_array(*seq2[:len_seq2].encode()),m)
-
+    seq1 = seq1_array(*seq1[:len_seq1].encode())
+    seq2 = seq2_array(*seq2[:len_seq2].encode())
+    len_seq1 = ctypes.c_int(len_seq1)
+    len_seq2 = ctypes.c_int(len_seq2)
+    return needleman_score.calc_needleman_score(seq1, len_seq1, seq2, len_seq2)
 
 def get_arn_sample(sample_id):
-   try:
-      sample_file = open('samples/{0}.fasta'.format(sample_id), 'r')
-      sample = ''
-      for line in sample_file:
-         sample += line.split('\n')[0]
-      return sample
-   except:
-      print('Error al cargar muestra')
-     
-def get_scores(samples, max_len = 1000):
+    '''This function eliminates the line breaks of each sample read from the FASTA file.'''
+    sample_file = open('samples/{0}.fasta'.format(sample_id), 'r')
+    sample = ''
+    for line in sample_file:
+        sample += line.split('\n')[0]
+    return sample
+
+def get_scores(samples, max_len=1000):
+    '''This function performs the alignment of all the RNA chains.'''
     samples = load_arn_samples(samples)
-    scores = []
-    for i in range(len(samples)):
-        sample_scores = []
-        current_arn_str = get_arn_sample(samples[i])
-        for j in range(len(samples)):
-            if j < i:
-                sample_scores.append(scores[j][i])
-            else:
-                arn_str_to_cmp = get_arn_sample(samples[j])
-                sample_scores.append(calcNeedlemanScore(current_arn_str, arn_str_to_cmp, max_len))
-        scores.append(sample_scores)
+    scores = [[0 for j in range(len(samples))] for i in range(len(samples))]
+    current_col = 0
+    current_row = 0
+    for sample in samples:
+        current_arn_str = get_arn_sample(sample)
+        current_col = current_row + 1
+        for sample_to_aling in samples[current_row + 1:]:
+            arn_str_to_cmp = get_arn_sample(sample_to_aling)
+            score = calc_needleman_score(current_arn_str, arn_str_to_cmp, max_len)
+            scores[current_row][current_col] = score
+            scores[current_col][current_row] = score
+            current_col += 1
+        current_row += 1
     return scores
-
-
-
-            
-
-
-
-
-
-
-
-
